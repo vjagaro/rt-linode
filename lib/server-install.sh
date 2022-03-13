@@ -81,7 +81,7 @@ echo "Configuring /etc/hosts..."
 cat <<-EOF >/etc/hosts
 # /etc/hosts
 127.0.0.1       localhost
-127.0.1.1       $SERVER_FQDN $SERVER_HOSTNAME
+127.0.1.1       $SERVER_HOSTNAME
 
 # The following lines are desirable for IPv6 capable hosts
 ::1             localhost ip6-localhost ip6-loopback
