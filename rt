@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -euo pipefail
+cd "$(dirname "$0")"
+
+source lib/lib.sh
+
+CLIENT_CONFIG=""
+LINODE_ID=""
+LINODE_IPV4=""
+LINODE_IPV6=""
+SERVER_IP=""
+
+usage() {
+  cat >&2 <<EOF
+Usage: $0 <COMMAND> ...
+
+  $0 client create       Create a new client
+  $0 client list         List clients
+  $0 client qrcode <N>   Show QR code for client N
+  $0 client remove <N>   Remove client N
+  $0 client update <N>   Update client N
+  $0 dns create          Create DNS records
+  $0 dns remove          Remove DNS records
+  $0 dns update          Update DNS records
+  $0 server create       Create the server
+  $0 server remove       Remove the server
+  $0 server ssh          SSH into server
+  $0 server status       Show the server status
+  $0 server update       Update the server
+  $0 setup               Run the initial setup
+EOF
+  exit 1
+}
+
+if [ $# -ge 2 ]; then
+  cmd="$1-$2"
+else
+  cmd="${1:-}"
+fi
+
+case "$cmd" in
+
+client-qrcode | client-remove | client-update)
+  arg="${3:-}"
+  if [ -z "$arg" ]; then
+    echo >&2 "ERROR: No client argument."
+    echo >&2
+    usage
+    exit 1
+  fi
+  _rt_require_client_config "$arg"
+  _rt_load_conf
+  _rt_setup_termux_ssh
+  source "lib/$cmd.sh"
+  ;;
+
+client-create | client-list | dns-create | dns-remove | dns-update | \
+  server-create | server-remove | server-ssh | server-status | server-update)
+  _rt_load_conf
+  _rt_setup_termux_ssh
+  source "lib/$cmd.sh"
+  ;;
+
+setup)
+  source "lib/$cmd.sh"
+  ;;
+
+*)
+  usage
+  ;;
+esac
