@@ -67,7 +67,7 @@ _rt_indent apt-get update -q
 
 echo "Upgrading packages..."
 
-DEBIAN_FRONTEND=noninteractive _rt_indent apt-get dist-upgrade -qy
+DEBIAN_FRONTEND=noninteractive _rt_indent apt-get upgrade -qy
 
 SERVER_HOSTNAME="$(echo $SERVER_FQDN | cut -d. -f1)"
 
