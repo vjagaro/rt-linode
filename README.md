@@ -11,7 +11,7 @@ cd rt-linode
 ./rt setup
 ```
 
-Review and edit `config`.
+Review and edit `rt.conf`.
 
 ## Usage
 
