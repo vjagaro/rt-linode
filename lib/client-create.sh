@@ -38,4 +38,3 @@ wg-quick save "$WG_IFACE" 2>/dev/null
 EOF
 
 echo "Added peer $PUBLIC_KEY to linode $LINODE_LABEL."
-

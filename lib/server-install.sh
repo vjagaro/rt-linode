@@ -17,16 +17,16 @@ _rt_apt_ensure() {
   local pkg
   for pkg in "$@"; do
     _rt_apt_installed "$pkg" ||
-      DEBIAN_FRONTEND=noninteractive apt-get install -qqy "$pkg"
+      DEBIAN_FRONTEND=noninteractive _rt_indent apt-get install -qqy "$pkg"
   done
 }
 
 _rt_indent() {
   {
     "$@" 2>&1 1>&3 |
-      perl -pe 's/^(.*)$/\e[31m  $1\e[0m/'
+      sed -u 's/^\(.*\)/  \x1b[31m\1\x1b[0m/'
   } 3>&1 1>&2 |
-    perl -pe 's/^(.*)$/\e[37m  $1\e[0m/'
+    sed -u 's/^\(.*\)/  \x1b[37m\1\x1b[0m/'
 }
 
 source /etc/rt.conf
@@ -91,7 +91,7 @@ EOF
 
 echo "Configuring firewall..."
 
-_rt_indent _rt_apt_ensure nftables
+_rt_apt_ensure nftables
 
 PUBLIC_IFACE=$(ip route ls default | awk '{print $5}')
 
@@ -164,19 +164,19 @@ _rt_indent sysctl --quiet --system
 
 echo "Installing Mosh..."
 
-_rt_indent _rt_apt_ensure mosh
+_rt_apt_ensure mosh
 
 echo "Installing network utilities..."
 
-_rt_indent _rt_apt_ensure nmap tcpdump
+_rt_apt_ensure nmap tcpdump
 
 echo "Installing automatic upgrades..."
 
-_rt_indent _rt_apt_ensure unattended-upgrades apt-listchanges
+_rt_apt_ensure unattended-upgrades apt-listchanges
 
 echo "Installing WireGuard..."
 
-_rt_indent _rt_apt_ensure wireguard
+_rt_apt_ensure wireguard
 
 echo "Configuring WireGuard..."
 
