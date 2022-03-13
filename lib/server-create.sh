@@ -1,4 +1,4 @@
-echo "Creating linode $LINODE_LABEL in $LINODE_REGION..."
+echo "Creating $LINODE_LABEL..."
 
 parts="$(
   _rt_linode_cli --as-user "$LINODE_USER" --format id,ipv4,ipv6 \
@@ -17,13 +17,18 @@ if [ -z "$parts" ]; then
 fi
 
 _rt_assign_linode "$parts"
+_rt_report_linode
+
+echo
+
+_rt_linode_cli --as-user "$LINODE_USER" --format label,region,type,image \
+  linodes list --label "$LINODE_LABEL"
+
+echo
 
 source "lib/dns-create.sh"
 
-ssh-keygen -qf "$HOME/.ssh/known_hosts" -R "$LINODE_IPV4" 2>/dev/null
-ssh-keygen -qf "$HOME/.ssh/known_hosts" -R "$LINODE_IPV6" 2>/dev/null
-ssh-keygen -qf "$HOME/.ssh/known_hosts" -R "$SERVER_FQDN" 2>/dev/null
-
+echo
 echo -n "Waiting for linode $LINODE_LABEL..."
 
 cat <<-EOF | timeout --foreground 120 bash -s
@@ -34,10 +39,19 @@ cat <<-EOF | timeout --foreground 120 bash -s
 EOF
 
 echo "ready!"
-
+echo
 echo "Installing linode $LINODE_LABEL..."
+echo
+
+ssh-keygen -qf "$HOME/.ssh/known_hosts" -R "$LINODE_IPV4" 2>/dev/null
+ssh-keygen -qf "$HOME/.ssh/known_hosts" -R "$LINODE_IPV6" 2>/dev/null
+ssh-keygen -qf "$HOME/.ssh/known_hosts" -R "$SERVER_FQDN" 2>/dev/null
 
 _rt_server_upload_conf
+
+echo
+
 cat lib/server-install.sh | _rt_server_ssh bash -s
 
+echo
 echo "Created linode $LINODE_LABEL."

@@ -9,10 +9,10 @@ _rt_assign_linode() {
   else
     SERVER_IP="$LINODE_IPV4"
   fi
-  echo "Linode has id $LINODE_ID and IPs $LINODE_IPV4, $LINODE_IPV6."
 }
 
 _rt_client_find() {
+  local conf
   local n="$(echo "$1" | sed 's|^\(.*/\)\?\([0-9]\+\).*$|\2|')"
   if [ -n "$n" ]; then
     conf="$(ls -1 "clients/$n-"*".conf" 2>/dev/null | head -1)"
@@ -24,6 +24,10 @@ _rt_client_find() {
 
 _rt_detect_termux() {
   test -f "$HOME/../usr/etc/termux-login.sh"
+}
+
+_rt_line() {
+  perl -E "say '-' x $(tput cols)"
 }
 
 _rt_linode_cli() {
@@ -48,6 +52,11 @@ _rt_require_client_config() {
     echo >&2 "To see available clients, try: $0 client list"
     exit 1
   fi
+  CLIENT_ADDRESS="$(cat "$CLIENT_CONFIG" | grep '^Address = ' |
+    sed 's/.* = //')"
+  CLIENT_PRIVATE_KEY="$(cat "$CLIENT_CONFIG" | grep '^PrivateKey = ' |
+    sed 's/.* = //')"
+  CLIENT_PUBLIC_KEY="$(echo "$CLIENT_PRIVATE_KEY" | wg pubkey)"
 }
 
 _rt_require_linode() {
@@ -62,19 +71,34 @@ _rt_require_linode() {
       exit 1
     fi
     _rt_assign_linode "$parts"
+    _rt_report_linode
   fi
 }
 
+_rt_report_client() {
+  echo
+  echo "Config:     $CLIENT_CONFIG"
+  echo "Public key: $CLIENT_PUBLIC_KEY"
+  echo "Address:    $CLIENT_ADDRESS"
+}
+
+_rt_report_linode() {
+  echo
+  echo "Linode ID: $LINODE_ID"
+  echo "IPv4:      $LINODE_IPV4"
+  echo "IPv6:      $LINODE_IPV6"
+}
+
 _rt_server_ssh() {
+  echo "Connecting to root@$SERVER_IP..."
+  _rt_line
   ssh -o "StrictHostKeyChecking no" "root@$SERVER_IP" "$@"
+  _rt_line
 }
 
 _rt_server_upload_conf() {
-  cat <<-EOF | _rt_server_ssh bash -s
-touch /etc/rt.conf
-chmod 600 /etc/rt.conf
-EOF
-  scp -q rt.conf "root@$SERVER_IP":/etc/rt.conf
+  echo "Uploading rt.conf to root@$SERVER_IP..."
+  scp -o "StrictHostKeyChecking no" -q rt.conf "root@$SERVER_IP":/etc/rt.conf
 }
 
 _rt_setup_termux_ssh() {

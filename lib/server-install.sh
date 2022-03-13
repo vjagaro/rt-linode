@@ -1,13 +1,4 @@
-#!/bin/bash
-
 set -euo pipefail
-
-# Require root
-
-if test "$(id -u)" -ne "0"; then
-  echo >&2 "ERROR: Must run as root."
-  exit 1
-fi
 
 _rt_apt_installed() {
   dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q ' installed'
@@ -30,6 +21,7 @@ _rt_indent() {
 }
 
 source /etc/rt.conf
+chmod 600 /etc/rt.conf
 
 echo "Adding a regular user..."
 getent group "$SERVER_REGULAR_USER" >/dev/null ||
@@ -67,7 +59,7 @@ _rt_indent apt-get update -q
 
 echo "Upgrading packages..."
 
-DEBIAN_FRONTEND=noninteractive _rt_indent apt-get upgrade -qy
+DEBIAN_FRONTEND=noninteractive _rt_indent apt-get upgrade -qqy
 
 SERVER_HOSTNAME="$(echo $SERVER_FQDN | cut -d. -f1)"
 

@@ -10,7 +10,10 @@ if [ -z "$LINODE_DOMAIN_ID" ]; then
   exit 1
 fi
 
-echo "Found linode domain $LINODE_DOMAIN with id $LINODE_DOMAIN_ID."
+echo
+echo "Linode domain:    $LINODE_DOMAIN"
+echo "Linode domain ID: $LINODE_DOMAIN_ID"
+echo
 
 LINODE_DOMAIN_RECORD_IPV4_ID=""
 LINODE_DOMAIN_RECORD_IPV6_ID=""
@@ -40,23 +43,23 @@ for type in A AAAA; do
     target="$LINODE_IPV6"
   fi
 
-  if [ "${LINODE_DNS_COMMAND:-}" = "remove" ]; then
+  if [ "${LINODE_DNS_COMMAND:-}" = "delete" ]; then
     if [ -n "$id" ]; then
-      echo "Removing $text domain record with id $id..."
+      echo "Deleting $text record..."
       _rt_linode_cli --as-user "$LINODE_DOMAIN_USER" domains records-delete \
-        "$LINODE_DOMAIN_ID" "$id"
+        "$LINODE_DOMAIN_ID" "$id" >/dev/null
     fi
   elif [ -n "$id" ]; then
-    echo "Updating $text domain record with id $id..."
+    echo "Updating $text record..."
     _rt_linode_cli --as-user "$LINODE_DOMAIN_USER" domains records-update \
       --type $type --name "$LINODE_DOMAIN_BASENAME" \
       --target "$target" --ttl_sec "$LINODE_DOMAIN_TTL" \
-      "$LINODE_DOMAIN_ID" "$id"
+      "$LINODE_DOMAIN_ID" "$id" >/dev/null
   else
-    echo "Creating $text domain record..."
+    echo "Creating $text record..."
     _rt_linode_cli --as-user "$LINODE_DOMAIN_USER" domains records-create \
       --type $type --name "$LINODE_DOMAIN_BASENAME" \
       --target "$target" --ttl_sec "$LINODE_DOMAIN_TTL" \
-      "$LINODE_DOMAIN_ID"
+      "$LINODE_DOMAIN_ID" >/dev/null
   fi
 done
