@@ -46,17 +46,20 @@ for type in A AAAA; do
   if [ "${LINODE_DNS_COMMAND:-}" = "delete" ]; then
     if [ -n "$id" ]; then
       echo "Deleting $text record..."
+      echo "  $SERVER_FQDN"
       _rt_linode_cli --as-user "$LINODE_DOMAIN_USER" domains records-delete \
         "$LINODE_DOMAIN_ID" "$id" >/dev/null
     fi
   elif [ -n "$id" ]; then
     echo "Updating $text record..."
+    echo "  $SERVER_FQDN -> $target"
     _rt_linode_cli --as-user "$LINODE_DOMAIN_USER" domains records-update \
       --type $type --name "$LINODE_DOMAIN_BASENAME" \
       --target "$target" --ttl_sec "$LINODE_DOMAIN_TTL" \
       "$LINODE_DOMAIN_ID" "$id" >/dev/null
   else
     echo "Creating $text record..."
+    echo "  $SERVER_FQDN -> $target"
     _rt_linode_cli --as-user "$LINODE_DOMAIN_USER" domains records-create \
       --type $type --name "$LINODE_DOMAIN_BASENAME" \
       --target "$target" --ttl_sec "$LINODE_DOMAIN_TTL" \
