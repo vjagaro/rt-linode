@@ -3,16 +3,16 @@ echo "Running setup..."
 if _rt_detect_termux; then
 
   echo "Detected Android Termux..."
-  pkg install -y git libqrencode netcat-openbsd openssh openssl-tool python \
-    mosh wireguard-tools
+  pkg install -y git libqrencode mosh ncurses-utils netcat-openbsd openssh \
+    openssl-tool python wireguard-tools
   test -d .venv || python -m venv .venv
 
 else
 
   echo "Assuming Debian..."
   sudo apt-get update
-  sudo apt-get install -y git qrencode openssh-client openssl netcat python3 \
-    python3-pip mosh wireguard
+  sudo apt-get install -y git mosh ncurses-bin openssh-client openssl netcat \
+    python3 python3-pip qrencode wireguard
   test -d .venv || python3 -m venv .venv
 
 fi
