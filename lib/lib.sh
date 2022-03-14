@@ -11,7 +11,7 @@ _rt_assign_linode() {
   fi
 }
 
-_rt_client_find() {
+_rt_find_client() {
   local conf
   local n="$(echo "$1" | sed 's|^\(.*/\)\?\([0-9]\+\).*$|\2|')"
   if [ -n "$n" ]; then
@@ -45,7 +45,7 @@ _rt_load_conf() {
 
 _rt_require_client_config() {
   local arg="$1"
-  CLIENT_CONFIG="$(_rt_client_find "$arg")"
+  CLIENT_CONFIG="$(_rt_find_client "$arg")"
   if [ -z "$CLIENT_CONFIG" ]; then
     echo >&2 "ERROR: Client $arg not found."
     echo >&2
