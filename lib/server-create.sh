@@ -26,7 +26,7 @@ _rt_linode_cli --as-user "$LINODE_USER" --format label,region,type,image \
 
 echo
 
-source "lib/dns-create.sh"
+source "lib/dns-set.sh"
 
 echo
 echo -n "Waiting for linode $LINODE_LABEL..."

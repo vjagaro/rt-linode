@@ -1,8 +1,20 @@
 echo "Deleting DNS records for $LINODE_LABEL..."
 
-LINODE_DNS_COMMAND="delete"
+_rt_require_linode
 
-source "lib/dns-common.sh"
+echo
+
+LINODE_DOMAIN_BASENAME="${SERVER_FQDN%.$LINODE_DOMAIN}"
+
+lib/linode-domain-record.sh delete4 \
+  --as-user "$LINODE_DOMAIN_USER" \
+  --domain "$LINODE_DOMAIN" \
+  --name "$LINODE_DOMAIN_BASENAME"
+
+lib/linode-domain-record.sh delete6 \
+  --as-user "$LINODE_DOMAIN_USER" \
+  --domain "$LINODE_DOMAIN" \
+  --name "$LINODE_DOMAIN_BASENAME"
 
 echo
 echo "Deleted DNS records for $LINODE_LABEL."

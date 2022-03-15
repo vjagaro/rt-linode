@@ -19,9 +19,8 @@ Usage: $0 <COMMAND> ...
   $0 client delete <N>   Delete local client N
   $0 client list         List local clients
   $0 client show <N>     Show local client N and its QR code
-  $0 dns create          Create DNS records
-  $0 dns delete          Delete DNS records
-  $0 dns update          Update DNS records
+  $0 dns delete          Delete the DNS records
+  $0 dns set             Set the DNS records
   $0 server create       Create the server
   $0 server delete       Delete the server
   $0 server ssh          SSH into server
@@ -55,9 +54,8 @@ client-delete | client-show)
   source "lib/$cmd.sh"
   ;;
 
-client-create | client-list | dns-create | dns-delete | dns-update | \
-  server-create | server-delete | server-ssh | server-status | server-sync | \
-  server-update )
+client-create | client-list | dns-delete | dns-set | server-create | \
+  server-delete | server-ssh | server-status | server-sync | server-update)
   _rt_load_conf
   _rt_setup_termux_ssh
   source "lib/$cmd.sh"
