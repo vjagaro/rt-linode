@@ -7,12 +7,14 @@ echo
 LINODE_DOMAIN_BASENAME="${SERVER_FQDN%.$LINODE_DOMAIN}"
 
 lib/linode-domain-record.sh set4 \
+  --linode-cli ".venv/bin/linode-cli" \
   --as-user "$LINODE_DOMAIN_USER" \
   --domain "$LINODE_DOMAIN" \
   --name "$LINODE_DOMAIN_BASENAME" \
   --target "$LINODE_IPV4"
 
 lib/linode-domain-record.sh set6 \
+  --linode-cli ".venv/bin/linode-cli" \
   --as-user "$LINODE_DOMAIN_USER" \
   --domain "$LINODE_DOMAIN" \
   --name "$LINODE_DOMAIN_BASENAME" \
