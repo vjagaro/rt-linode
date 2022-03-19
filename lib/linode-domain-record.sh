@@ -178,12 +178,14 @@ if [ "$COMMAND" = "get4" ] || [ "$COMMAND" = "get6" ]; then
 else
 
   unset RECORD_ID
+  unset EXISTING
   while read line; do
     IFS="," read -a a <<<"$line"
     id="${a[0]}"
     match="${a[1]}:${a[2]}"
     if [ "$match" = "$TYPE:$NAME" ]; then
       RECORD_ID="$id"
+      EXISTING="${a[3]}"
       break
     fi
   done <<<"$records"
@@ -202,6 +204,8 @@ else
       --type $TYPE --name "$NAME" --target "$TARGET" --ttl_sec "$TTL" \
       "$DOMAIN_ID" >/dev/null
     _info
+  elif [ "$TARGET" = "$EXISTING" ]; then
+    _info "Exists $FQDN ($TYPE): $TARGET, not updating."
   else
     _info -n "Updating $FQDN ($TYPE): $TARGET..."
     _linode_cli domains records-update \
