@@ -12,7 +12,7 @@ else
   echo "Assuming Debian..."
   sudo apt-get update
   sudo apt-get install -y git mosh ncurses-bin openssh-client openssl netcat \
-    python3 python3-pip qrencode wireguard
+    python3 python3-pip python3-venv qrencode wireguard
   test -d .venv || python3 -m venv .venv
 
 fi
